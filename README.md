@@ -9,7 +9,7 @@ The ICCS dataset is [available for download on HuggingFace](https://huggingface.
 
 ### Confidence Labels
 
-The authors of the United Nations International Panel on Climate Change (IPCC) reports have developed a structured framework to communicate the confidence and uncertainty levels of statements regarding our knowledge of climate change [Mastrandrea, 2010](https://link.springer.com/article/10.1007/s10584-011-0178-6). 
+The authors of the United Nations International Panel on Climate Change (IPCC) reports have developed a structured framework to communicate the confidence and uncertainty levels of statements regarding our knowledge of climate change ([Mastrandrea, 2010](https://link.springer.com/article/10.1007/s10584-011-0178-6)). 
 
 Our dataset leverages this distinctive and consistent approach to labelling uncertainty across topics, disciplines, and report chapters, to help NLP and climate communication researchers evaluate how well LLMs can assess human expert confidence in a set of climate science statements from the IPCC reports.
 
