@@ -5,8 +5,7 @@ _What do LLMs know about climate? Let's find out!_
 
 We introduce the **ICCS dataset (IPCC Confidence in Climate Statements)**, a novel, curated, expert-labeled, natural language dataset of 8094 statements extracted or paraphrased from the three latest IPCC reports, along with their associated confidence levels (low, medium, high, or very high) as assessed by IPCC climate scientists based on the quantity and quality of available evidence and agreement among their peers. 
 
-The ICCS dataset is available for download researchers on [HuggingFace](https://huggingface.co/datasets/rlacombe/ICCS).
-
+The ICCS dataset is [available for download on HuggingFace](https://huggingface.co/datasets/rlacombe/ICCS).
 
 ### Confidence Labels
 
