@@ -49,12 +49,10 @@ Then, we manually reviewed and cleaned each sentence in the test set to provide 
 - We split 19 compound statements with conflicting confidence sub-labels, and removed 6 extraneous mid-sentence labels of the same category as the end-of-sentence label;
 - We added light context to 23 sentences, and replaced 5 sentences by others when they were meaningless outside of a longer paragraph;
 - We removed qualifiers at the beginning of 29 sentences to avoid biasing classification (e.g. 'But...', 'In summary...', 'However...').
-\end{itemize}
 
 **The remaining 7794 sentences not allocated to the test split form our train split.**
 
 Of note: while the IPCC report uses a 5 levels scale for confidence, almost no `very low confidence` statement makes it through the peer review process to the final reports, such that no statement of the form _sentence (very low confidence)_ was retrievable. Therefore, we chose to build our data set with only statements labeled as `low`, `medium`, `high` and `very high` confidence.
-
 
 ### Paper ### 
 
