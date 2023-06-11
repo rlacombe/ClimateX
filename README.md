@@ -7,7 +7,7 @@ We introduce the **ICCS dataset (IPCC Confidence in Climate Statements)**, a nov
 
 The ICCS dataset is [available for download on HuggingFace](https://huggingface.co/datasets/rlacombe/ICCS).
 
-### Confidence Labels
+### IPCC Confidence Labels
 
 The authors of the United Nations International Panel on Climate Change (IPCC) reports have developed a structured framework to communicate the confidence and uncertainty levels of statements regarding our knowledge of climate change ([Mastrandrea, 2010](https://link.springer.com/article/10.1007/s10584-011-0178-6)). 
 
@@ -15,6 +15,7 @@ Our dataset leverages this distinctive and consistent approach to labelling unce
 
 ![](ipcc-scales.png)
 
+Source: [IPCC AR6 Working Group I report](https://www.ipcc.ch/report/ar6/wg1/)
 
 ### Dataset Construction
 
