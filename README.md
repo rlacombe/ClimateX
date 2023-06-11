@@ -5,31 +5,17 @@ _What do LLMs know about climate? Let's find out!_
 
 We introduce the **ICCS dataset (IPCC Confidence in Climate Statements)**, a novel, curated, expert-labeled, natural language dataset of 8094 statements extracted or paraphrased from the three latest IPCC reports, along with their associated confidence levels (low, medium, high, or very high) as assessed by IPCC climate scientists based on the quantity and quality of available evidence and agreement among their peers. 
 
-### Dataset & Code Download
-
 The ICCS dataset is available for download researchers on [HuggingFace](https://huggingface.co/datasets/rlacombe/ICCS).
 
-This repository contains dataset collection and analysis code, as well as our zero-shot and few-shots experiments on the ICCS dataset, using the [DSP library](https://github.com/stanfordnlp/dsp). We also release raw output from our scraper script to construct the raw train and test sets before light curation, for reproductibility purposes, as well a random baseline dataset of 337 sentences created as a robustness check. 
 
-```
-├─ README.MD -> this document
-│
-├─ dsp_zeroshot_experiments.ipynb -> notebook to reproduce zero-shot experiments
-├─ dsp_fewshots_experiments.ipynb -> notebook to reproduce few-shots experiments
-├─ random_baseline_experiments.ipynb -> notebook to reproduce random baseline experiments
-├─ pdf_scraper.ipynb -> notebook to reproduce the dataset from the IPCC reports
-│
-├─ data/ -> ICCS dataset
-│    └─ ipcc_statements_dataset.tsv -> ICCS train and test sets
-│    └─ random_baseline.csv -> random baseline dataset
-│    └─ text_processing/ -> raw output of dataset collection notebook for reproduction purposes
-│
-├─ results/ -> experimental results
-│    └─ iccs_zeroshot -> raw model output from zero-shot experiments
-│    └─ iccs_fewshots -> raw model output from zero-shot experiments
-│    └─ iccs_zeroshot -> raw model output from zero-shot experiments
+### Confidence Labels
 
-```
+The authors of the United Nations International Panel on Climate Change (IPCC) reports have developed a structured framework to communicate the confidence and uncertainty levels of statements regarding our knowledge of climate change [Mastrandrea, 2010](https://link.springer.com/article/10.1007/s10584-011-0178-6). 
+
+Our dataset leverages this distinctive and consistent approach to labelling uncertainty across topics, disciplines, and report chapters, to help NLP and climate communication researchers evaluate how well LLMs can assess human expert confidence in a set of climate science statements from the IPCC reports.
+
+![](ipcc-scales.png)
+
 
 ### Dataset Construction
 
@@ -65,3 +51,28 @@ We show that `gpt3.5-turbo` and `gpt4` assess the correct confidence level with 
 Our results have implications for climate communications and the use of generative language models in knowledge retrieval systems. We hope the ICCS dataset provides the NLP and climate sciences communities with a valuable tool with which to evaluate and improve model performance in this critical domain of human knowledge. 
 
 Pre-print upcomping.
+
+
+### Experimental Code
+
+This repository contains dataset collection and analysis code, as well as our zero-shot and few-shots experiments on the ICCS dataset, using the [DSP library](https://github.com/stanfordnlp/dsp). We also release raw output from our scraper script to construct the raw train and test sets before light curation, for reproductibility purposes, as well a random baseline dataset of 337 sentences created as a robustness check. 
+
+```
+├─ README.MD -> this document
+│
+├─ dsp_zeroshot_experiments.ipynb -> notebook to reproduce zero-shot experiments
+├─ dsp_fewshots_experiments.ipynb -> notebook to reproduce few-shots experiments
+├─ random_baseline_experiments.ipynb -> notebook to reproduce random baseline experiments
+├─ pdf_scraper.ipynb -> notebook to reproduce the dataset from the IPCC reports
+│
+├─ data/ -> ICCS dataset
+│    └─ ipcc_statements_dataset.tsv -> ICCS train and test sets
+│    └─ random_baseline.csv -> random baseline dataset
+│    └─ text_processing/ -> raw output of dataset collection notebook for reproduction purposes
+│
+├─ results/ -> experimental results
+│    └─ iccs_zeroshot -> raw model output from zero-shot experiments
+│    └─ iccs_fewshots -> raw model output from zero-shot experiments
+│    └─ iccs_zeroshot -> raw model output from zero-shot experiments
+
+```
