@@ -49,8 +49,6 @@ We show that `gpt3.5-turbo` and `gpt4` assess the correct confidence level with 
 Our results have implications for climate communications and the use of generative language models in knowledge retrieval systems. We hope the ICCS dataset provides the NLP and climate sciences communities with a valuable tool with which to evaluate and improve model performance in this critical domain of human knowledge. 
 
 Pre-print upcomping.
-<<<<<<< HEAD
-
 
 ### Experimental Code
 
@@ -75,5 +73,3 @@ This repository contains dataset collection and analysis code, as well as our ze
 │    └─ iccs_zeroshot -> raw model output from zero-shot experiments
 
 ```
-=======
->>>>>>> cdeefbbff1824a797009aa5a3d43571cc59723a1
