@@ -1,11 +1,11 @@
-# LLMs IPCC Confidence in Climate Statements
+# ClimateECCS: Expert Confidence in Climate Statements
 _What do LLMs know about climate? Let's find out!_
 
-### ICCS Dataset
+### ClimateECCS Dataset
 
-We introduce the **ICCS dataset (IPCC Confidence in Climate Statements)**, a novel, curated, expert-labeled, natural language dataset of 8094 statements extracted or paraphrased from the three latest IPCC reports, along with their associated confidence levels (low, medium, high, or very high) as assessed by IPCC climate scientists based on the quantity and quality of available evidence and agreement among their peers. 
+We introduce the **ClimateECCS (Expert Confidence in Climate Statements) dataset**, a novel, curated, expert-labeled, natural language dataset of 8094 statements extracted or paraphrased from the three latest IPCC reports, along with their associated confidence levels (low, medium, high, or very high) as assessed by IPCC climate scientists based on the quantity and quality of available evidence and agreement among their peers. 
 
-The ICCS dataset is [available for download on HuggingFace](https://huggingface.co/datasets/rlacombe/ICCS).
+The ClimateECCS dataset is [available for download on HuggingFace](https://huggingface.co/datasets/rlacombe/ClimateECCS).
 
 ### IPCC Confidence Labels
 
@@ -19,11 +19,11 @@ Source: [IPCC AR6 Working Group I report](https://www.ipcc.ch/report/ar6/wg1/)
 
 ### Dataset Construction
 
-The **ICCS dataset (IPCC Confidence in Climate Statements)** is a novel, curated, expert-labeled, natural language dataset of 8094 statements extracted or paraphrased from the IPCC Assessment Report 6: [Working Group I report](https://www.ipcc.ch/report/ar6/wg1/), [Working Group II report](https://www.ipcc.ch/report/ar6/wg2/), and [Working Group III report](https://www.ipcc.ch/report/ar6/wg3/), respectively. 
+The **ClimateECCS (Expert Confidence in Climate Statements) dataset** is a novel, curated, expert-labeled, natural language dataset of 8094 statements extracted or paraphrased from the IPCC Assessment Report 6: [Working Group I report](https://www.ipcc.ch/report/ar6/wg1/), [Working Group II report](https://www.ipcc.ch/report/ar6/wg2/), and [Working Group III report](https://www.ipcc.ch/report/ar6/wg3/), respectively. 
 
 Each statement is labeled with the corresponding IPCC report source, the page number in the report PDF, and the corresponding confidence level on the 5-level confidence scale as assessed by IPCC climate scientists based on available evidence and agreement among their peers. 
 
-To construct the dataset, we retrieved the complete raw text from each of the three IPCC report PDFs that are available online using an open-source library [pypdf2](https://pypi.org/project/PyPDF2/). We then normalized the whitespace, tokenized the text into sentences using [NLTK](https://www.nltk.org/) , and used regex search to filter for complete sentences including a parenthetical confidence label at the end of the statement, of the form _sentence (low|medium|high|very high confidence)_. The final ICCS dataset contains 8094 labeled sentences. 
+To construct the dataset, we retrieved the complete raw text from each of the three IPCC report PDFs that are available online using an open-source library [pypdf2](https://pypi.org/project/PyPDF2/). We then normalized the whitespace, tokenized the text into sentences using [NLTK](https://www.nltk.org/) , and used regex search to filter for complete sentences including a parenthetical confidence label at the end of the statement, of the form _sentence (low|medium|high|very high confidence)_. The final ClimateECCS dataset contains 8094 labeled sentences. 
 
 From the full 8094 labeled sentences, we further selected **300 statements to form a smaller and more tractable test dataset**. We performed a random selection of sentences within each report and confidence category, with the following objectives:
 - Making the test set distribution representative of the confidence class distribution in the overall train set and within each report;
@@ -46,13 +46,13 @@ We use this dataset to evaluate how recent LLMs fare at classifying the  scienti
 
 We show that `gpt3.5-turbo` and `gpt4` assess the correct confidence level with reasonable accuracy even in the zero-shot setting; but that, along with other language models we tested, they consistently overstate the certainty level associated with low and medium confidence labels. Models generally perform better on reports before their knowledge cutoff, and demonstrate intuitive classifications on a baseline of non-climate statements. However, we caution it is still not fully clear why these models perform well, and whether they may also pick up on linguistic cues within the climate statements and not just prior exposure to climate knowledge and/or IPCC reports.
 
-Our results have implications for climate communications and the use of generative language models in knowledge retrieval systems. We hope the ICCS dataset provides the NLP and climate sciences communities with a valuable tool with which to evaluate and improve model performance in this critical domain of human knowledge. 
+Our results have implications for climate communications and the use of generative language models in knowledge retrieval systems. We hope the ClimateECCS dataset provides the NLP and climate sciences communities with a valuable tool with which to evaluate and improve model performance in this critical domain of human knowledge. 
 
 Pre-print upcomping.
 
 ### Experimental Code
 
-This repository contains dataset collection and analysis code, as well as our zero-shot and few-shots experiments on the ICCS dataset, using the [DSP library](https://github.com/stanfordnlp/dsp). We also release raw output from our scraper script to construct the raw train and test sets before light curation, for reproductibility purposes, as well a random baseline dataset of 337 sentences created as a robustness check. 
+This repository contains dataset collection and analysis code, as well as our zero-shot and few-shots experiments on the ClimateECCS dataset, using the [DSP library](https://github.com/stanfordnlp/dsp). We also release raw output from our scraper script to construct the raw train and test sets before light curation, for reproductibility purposes, as well a random baseline dataset of 337 sentences created as a robustness check. 
 
 ```
 ├─ README.MD -> this document
@@ -62,10 +62,14 @@ This repository contains dataset collection and analysis code, as well as our ze
 ├─ random_baseline_experiments.ipynb -> notebook to reproduce random baseline experiments
 ├─ pdf_scraper.ipynb -> notebook to reproduce the dataset from the IPCC reports
 │
-├─ data/ -> ICCS dataset
-│    └─ ipcc_statements_dataset.tsv -> ICCS train and test sets
+├─ data/ -> ClimateECCS dataset
+│    └─ ipcc_statements_dataset.tsv -> ClimateECCS train and test sets
 │    └─ random_baseline.csv -> random baseline dataset
 │    └─ text_processing/ -> raw output of dataset collection notebook for reproduction purposes
+│
+├─ human eval/ -> baseline human evaluation
+│    └─ human_eval_testset.tsv -> raw output from human eval
+│    └─ human_nonexpert_confidence.ipynb -> data analysis
 │
 ├─ results/ -> experimental results
 │    └─ iccs_zeroshot -> raw model output from zero-shot experiments
