@@ -147,8 +147,7 @@ def evaluate_accuracy(loader):
     return accuracy
 
 # Training loop with accuracy evaluation at each epoch
-for epoch in range(epochs):
-    trainer.train()
+trainer.train()
 
 # Final eval on test set
 test_accuracy = evaluate_accuracy(test_loader)
