@@ -11,11 +11,11 @@ tqdm.pandas()
 
 # Define your training parameters
 batch_size = 256 # Adjust to GPU memory (works on T4)
-max_length = 512
-train_size = 0.8
+max_length = 512 # ClimateX train set max length:  
+train_size = 0.85 
 learning_rate = 1e-4
-epochs = 5
-eval_steps = 5
+epochs = 1
+eval_steps = 5 # Can reduce after hyperparams search
 
 # Load your dataset into a pandas DataFrame
 df = pd.read_csv('data/ipcc_statements_dataset.tsv', sep='\t')
@@ -132,6 +132,8 @@ def evaluate_accuracy(loader):
     all_preds = []
     all_labels = []
 
+    device = torch.device("cuda")
+
     with torch.no_grad():
         for batch in loader:
             input_ids = batch['input_ids'].to(device)
@@ -153,11 +155,13 @@ def evaluate_accuracy(loader):
 # Training loop with accuracy evaluation at each epoch
 trainer.train()
 
+# Final eval on val set
+val_accuracy = evaluate_accuracy(val_loader)
+print(f'Val Set Accuracy: {val_accuracy * 100:.2f}%')
+
 # Final eval on test set
 test_accuracy = evaluate_accuracy(test_loader)
-print(f'Epoch {epoch + 1}, Test Accuracy: {test_accuracy * 100:.2f}%')
+print(f'Test Set Accuracy: {test_accuracy * 100:.2f}%')
 
 # Save the fine-tuned model
-model.save_pretrained('./bert_fine_tuned')
-
-# You can now use the fine-tuned model for inference or further evaluation.
+model.save_pretrained(f"./bert_classifier_{epochs}ep_lr{learning_rate}")
