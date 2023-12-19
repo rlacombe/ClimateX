@@ -6,6 +6,16 @@ from transformers import BertTokenizer, BertForSequenceClassification, AdamW, Da
 from torch.utils.data import DataLoader, Dataset, TensorDataset, random_split
 from transformers import TrainingArguments, Trainer
 import numpy as np
+from tqdm.notebook import tqdm
+tqdm.pandas()
+
+# Define your training parameters
+batch_size = 256 # Adjust to GPU memory (works on T4)
+max_length = 512
+train_size = 0.8
+learning_rate = 1e-4
+epochs = 5
+eval_steps = 5
 
 # Load your dataset into a pandas DataFrame
 df = pd.read_csv('data/ipcc_statements_dataset.tsv', sep='\t')
@@ -58,13 +68,6 @@ class CustomDataset(Dataset):
             'labels': torch.tensor(score, dtype=torch.long)
         }
 
-# Define your training parameters
-batch_size = 128
-max_length = 256
-train_size = 0.9
-learning_rate = 1e-3
-epochs = 5
-
 # Filter the DataFrame to get the training set
 train_df = df[df['split'] == 'train']
 test_df = df[df['split'] == 'test']
@@ -102,7 +105,8 @@ training_args = TrainingArguments(
     output_dir='./bert_classifier',
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=batch_size,
-    evaluation_strategy='epoch',
+    evaluation_strategy='steps',
+    eval_steps=eval_steps,
     logging_dir='./logs',
     learning_rate=learning_rate,
     num_train_epochs=epochs,
