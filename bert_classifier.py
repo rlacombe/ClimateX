@@ -1,13 +1,13 @@
 import torch
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from transformers import BertTokenizer, BertForSequenceClassification, AdamW, DataCollatorWithPadding
+from sklearn.metrics import accuracy_score
+from transformers import BertTokenizer, BertForSequenceClassification, AdamW, DataCollatorWithPadding, EvalPrediction
 from torch.utils.data import DataLoader, Dataset, TensorDataset, random_split
 from transformers import TrainingArguments, Trainer
 import numpy as np
 
 # Load your dataset into a pandas DataFrame
-# Replace 'your_data.csv' with your actual dataset file
 df = pd.read_csv('data/ipcc_statements_dataset.tsv', sep='\t')
 
 # Define your labels and corresponding class names
@@ -59,17 +59,18 @@ class CustomDataset(Dataset):
         }
 
 # Define your training parameters
-batch_size = 32
+batch_size = 128
+max_length = 256
 train_size = 0.9
-learning_rate = 3e-4
-epochs = 10
+learning_rate = 1e-3
+epochs = 5
 
 # Filter the DataFrame to get the training set
 train_df = df[df['split'] == 'train']
 test_df = df[df['split'] == 'test']
 
-# Compute the maximum sequence length based on the training set
-max_length = min(train_df['statement'].apply(lambda x: len(tokenizer.encode(x))).max(), 512)
+train_df = train_df.reset_index(drop=True)
+test_df = test_df.reset_index(drop=True)
 
 # Create the custom dataset
 dataset = CustomDataset(train_df, tokenizer, max_length)
@@ -91,6 +92,11 @@ data_collator = DataCollatorWithPadding(
     padding='longest',  # Pad to the length of the longest sequence in the batch
 )
 
+# Define metrics to compute
+def compute_metrics(p: EvalPrediction):
+    preds = np.argmax(p.predictions, axis=1)
+    return {"accuracy": accuracy_score(p.label_ids, preds)}
+
 # Define the training arguments
 training_args = TrainingArguments(
     output_dir='./bert_classifier',
@@ -102,7 +108,7 @@ training_args = TrainingArguments(
     num_train_epochs=epochs,
     save_steps=10_000,
     save_total_limit=2,
-    remove_unused_columns=False,
+    remove_unused_columns=True,
     push_to_hub=False,
 )
 
@@ -111,7 +117,7 @@ trainer = Trainer(
     model=model,
     args=training_args,
     data_collator=data_collator,
-    compute_metrics=None,
+    compute_metrics=compute_metrics,
     train_dataset=train_dataset,
     eval_dataset=val_dataset,
 )
@@ -144,14 +150,9 @@ def evaluate_accuracy(loader):
 for epoch in range(epochs):
     trainer.train()
 
-    # Evaluate accuracy on the validation set
-    val_accuracy = evaluate_accuracy(val_loader)
-    print(f'Epoch {epoch + 1}/{epochs}, Validation Accuracy: {val_accuracy * 100:.2f}%')
-
 # Final eval on test set
 test_accuracy = evaluate_accuracy(test_loader)
 print(f'Epoch {epoch + 1}, Test Accuracy: {test_accuracy * 100:.2f}%')
-
 
 # Save the fine-tuned model
 model.save_pretrained('./bert_fine_tuned')
