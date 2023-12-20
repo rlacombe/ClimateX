@@ -1,21 +1,21 @@
 import torch
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from transformers import BertTokenizer, BertForSequenceClassification, AdamW, DataCollatorWithPadding, EvalPrediction
-from torch.utils.data import DataLoader, Dataset, TensorDataset, random_split
+from transformers import BertTokenizer, BertForSequenceClassification, DataCollatorWithPadding, EvalPrediction
+from torch.utils.data import DataLoader, Dataset, random_split
 from transformers import TrainingArguments, Trainer
 import numpy as np
 from tqdm.notebook import tqdm
 tqdm.pandas()
 
 # Define your training parameters
-batch_size = 256 # Adjust to GPU memory (works on T4)
+batch_size = 16 # Adjust to GPU memory (works on T4)
 max_length = 512 # ClimateX train set max length:  
 train_size = 0.85 
 learning_rate = 1e-4
 epochs = 1
-eval_steps = 5 # Can reduce after hyperparams search
+eval_steps = 80 # Can reduce after hyperparams search
+fine_tune_bert = True # False to fine-tune only head
 
 # Load your dataset into a pandas DataFrame
 df = pd.read_csv('data/ipcc_statements_dataset.tsv', sep='\t')
@@ -35,7 +35,7 @@ model = BertForSequenceClassification.from_pretrained(
 
 # Freeze the BERT layers
 for param in model.bert.parameters():
-    param.requires_grad = False
+    param.requires_grad = fine_tune_bert
 
 # Define a custom dataset class
 class CustomDataset(Dataset):
@@ -164,4 +164,4 @@ test_accuracy = evaluate_accuracy(test_loader)
 print(f'Test Set Accuracy: {test_accuracy * 100:.2f}%')
 
 # Save the fine-tuned model
-model.save_pretrained(f"./bert_classifier_{epochs}ep_lr{learning_rate}")
+model.save_pretrained(f"./bert_classifier_{epochs}ep_lr{learning_rate}{'_full' if fine_tune_bert else '_head'}")
