@@ -75,8 +75,25 @@ test_df = df[df['split'] == 'test']
 train_df = train_df.reset_index(drop=True)
 test_df = test_df.reset_index(drop=True)
 
-# Create the custom dataset
-dataset = CustomDataset(train_df, tokenizer, max_length)
+# Rebalance classes in the train set to match test set distribution
+df_low = train_df[train_df['confidence'] == 'low']
+df_medium = train_df[train_df['confidence'] == 'medium']
+df_high = train_df[train_df['confidence'] == 'high']
+df_very_high = train_df[train_df['confidence'] == 'very high']
+
+total_size = 8000 
+size_medium = size_high = total_size * 0.3333
+size_low = size_very_high = total_size * 0.1666
+
+df_low_resampled = df_low.sample(size_low, replace=True)  # Oversampling 
+df_medium_resampled = df_medium.sample(size_medium, replace=True)  # Undersampling 
+df_high_resampled = df_high.sample(size_high, replace=True)  # Undersampling 
+df_very_high_resampled = df_very_high.sample(size_very_high, replace=True)  # Oversampling
+
+train_df_resampled = pd.concat([df_low_resampled, df_medium_resampled, df_high_resampled, df_very_high_resampled])
+train_df_resampled = train_df_resampled.sample(frac=1).reset_index(drop=True)
+
+dataset = CustomDataset(train_df_resampled, tokenizer, max_length)
 test_dataset = CustomDataset(test_df, tokenizer, max_length)
 
 # Split the dataset into training and validation sets
