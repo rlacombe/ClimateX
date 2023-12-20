@@ -10,7 +10,7 @@ tqdm.pandas()
 
 # Define your training parameters
 batch_size = 16 # Adjust to GPU memory (works on T4)
-max_length = 512 # ClimateX train set max length:  
+max_length = 512 # ClimateX train set max length: 857 
 train_size = 0.85 
 learning_rate = 1e-4
 epochs = 1
@@ -82,8 +82,8 @@ df_high = train_df[train_df['confidence'] == 'high']
 df_very_high = train_df[train_df['confidence'] == 'very high']
 
 total_size = 8000 
-size_medium = size_high = total_size * 0.3333
-size_low = size_very_high = total_size * 0.1666
+size_medium = size_high = round(total_size * 0.3333)
+size_low = size_very_high = round(total_size * 0.1666)
 
 df_low_resampled = df_low.sample(size_low, replace=True)  # Oversampling 
 df_medium_resampled = df_medium.sample(size_medium, replace=True)  # Undersampling 
@@ -121,7 +121,7 @@ def compute_metrics(p: EvalPrediction):
 training_args = TrainingArguments(
     output_dir='./bert_classifier',
     per_device_train_batch_size=batch_size,
-    per_device_eval_batch_size=batch_size,
+    per_device_eval_batch_size=(batch_size if not fine_tune_bert else 8*batch_size),
     evaluation_strategy='steps',
     eval_steps=eval_steps,
     logging_dir='./logs',
