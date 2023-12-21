@@ -13,8 +13,8 @@ tqdm.pandas()
 batch_size = 16 # Adjust to GPU memory (works on T4)
 max_length = 512 # ClimateX train set max length: 857 
 train_size = 0.85 
-learning_rate = 1e-4
-epochs = 1
+learning_rate = 1e-5
+epochs = 2
 eval_steps = 80 # Can reduce after hyperparams search
 fine_tune_bert = True # False to fine-tune only head
 
