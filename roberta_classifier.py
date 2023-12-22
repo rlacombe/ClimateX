@@ -10,13 +10,14 @@ tqdm.pandas()
 
 
 # Define training parameters
-batch_size = 16 # Adjust to GPU memory (works on T4)
+batch_size = 6 # Adjust to GPU memory (works on T4)
 max_length = 512 # ClimateX train set max length: 857 
 train_size = 0.85 
 learning_rate = 1e-5
 epochs = 2
-eval_steps = 80 # Can reduce after hyperparams search
+eval_steps = 200 # Can reduce after hyperparams search
 fine_tune_bert = True # False to fine-tune only head
+total_size = 12000 # Oversampling dataset size
 
 # Load dataset into a pandas DataFrame
 df = pd.read_csv('data/ipcc_statements_dataset.tsv', sep='\t')
@@ -25,7 +26,7 @@ df = pd.read_csv('data/ipcc_statements_dataset.tsv', sep='\t')
 class_names = ['low', 'medium', 'high', 'very high']
 
 # Define the RoBERTa model and tokenizer
-model_name = 'roberta-base'
+model_name = 'roberta-large'
 tokenizer = RobertaTokenizer.from_pretrained(model_name)
 model = RobertaForSequenceClassification.from_pretrained(
     model_name,
@@ -82,8 +83,7 @@ df_low = train_df[train_df['confidence'] == 'low']
 df_medium = train_df[train_df['confidence'] == 'medium']
 df_high = train_df[train_df['confidence'] == 'high']
 df_very_high = train_df[train_df['confidence'] == 'very high']
-
-total_size = 8000 
+ 
 size_medium = size_high = round(total_size * 0.3333)
 size_low = size_very_high = round(total_size * 0.1666)
 
@@ -121,7 +121,7 @@ def compute_metrics(p: EvalPrediction):
 
 # Define the training arguments
 training_args = TrainingArguments(
-    output_dir='./roberta_classifier',
+    output_dir=f"./classifier_{model_name}_{epochs}ep_lr{learning_rate}{'_full' if fine_tune_bert else '_head'}",
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=(batch_size if not fine_tune_bert else 8*batch_size),
     evaluation_strategy='steps',
@@ -183,4 +183,4 @@ test_accuracy = evaluate_accuracy(test_loader)
 print(f'Test Set Accuracy: {test_accuracy * 100:.2f}%')
 
 # Save the fine-tuned model
-model.save_pretrained(f"./roberta_classifier_{epochs}ep_lr{learning_rate}{'_full' if fine_tune_bert else '_head'}")
+model.save_pretrained(f"./classifier_{model_name}_{epochs}ep_lr{learning_rate}{'_full' if fine_tune_bert else '_head'}")
