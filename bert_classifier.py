@@ -16,6 +16,7 @@ learning_rate = 1e-4
 epochs = 1
 eval_steps = 80 # Can reduce after hyperparams search
 fine_tune_bert = True # False to fine-tune only head
+total_size = 12000 # Oversampling dataset size
 
 # Load your dataset into a pandas DataFrame
 df = pd.read_csv('data/ipcc_statements_dataset.tsv', sep='\t')
@@ -81,7 +82,6 @@ df_medium = train_df[train_df['confidence'] == 'medium']
 df_high = train_df[train_df['confidence'] == 'high']
 df_very_high = train_df[train_df['confidence'] == 'very high']
 
-total_size = 8000 
 size_medium = size_high = round(total_size * 0.3333)
 size_low = size_very_high = round(total_size * 0.1666)
 
@@ -181,4 +181,4 @@ test_accuracy = evaluate_accuracy(test_loader)
 print(f'Test Set Accuracy: {test_accuracy * 100:.2f}%')
 
 # Save the fine-tuned model
-model.save_pretrained(f"./bert_classifier_{epochs}ep_lr{learning_rate}{'_full' if fine_tune_bert else '_head'}")
+model.save_pretrained(f"./classifier_{model_name}_{epochs}ep_lr{learning_rate}{'_full' if fine_tune_bert else '_head'}")
