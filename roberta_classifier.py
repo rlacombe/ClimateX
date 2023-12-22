@@ -1,7 +1,7 @@
 import torch
 import pandas as pd
 from sklearn.metrics import accuracy_score
-from transformers import RobertaTokenizer, RobertaForSequenceClassification, DataCollatorWithPadding, EvalPrediction
+from transformers import RobertaTokenizer, RobertaConfig, RobertaForSequenceClassification, DataCollatorWithPadding, EvalPrediction
 from torch.utils.data import DataLoader, Dataset, random_split
 from transformers import TrainingArguments, Trainer
 import numpy as np
@@ -14,10 +14,11 @@ batch_size = 6 # Adjust to GPU memory (works on T4)
 max_length = 512 # ClimateX train set max length: 857 
 train_size = 0.85 
 learning_rate = 1e-5
-epochs = 2
+epochs = 3
 eval_steps = 200 # Can reduce after hyperparams search
 fine_tune_bert = True # False to fine-tune only head
 total_size = 12000 # Oversampling dataset size
+dropout_prob=0.2  # Dropout rate, default 0.1
 
 # Load dataset into a pandas DataFrame
 df = pd.read_csv('data/ipcc_statements_dataset.tsv', sep='\t')
@@ -28,11 +29,15 @@ class_names = ['low', 'medium', 'high', 'very high']
 # Define the RoBERTa model and tokenizer
 model_name = 'roberta-large'
 tokenizer = RobertaTokenizer.from_pretrained(model_name)
-model = RobertaForSequenceClassification.from_pretrained(
+model_config = RobertaConfig.from_pretrained(
     model_name,
     num_labels=len(class_names),
-    output_attentions=False,
-    output_hidden_states=False,
+    hidden_dropout_prob= dropout_prob,  
+    attention_probs_dropout_prob= dropout_prob
+)
+model = RobertaForSequenceClassification.from_pretrained(
+    model_name,
+    config = model_config
 )
 
 # Freeze the RoBERTa layers (if required)
@@ -121,7 +126,7 @@ def compute_metrics(p: EvalPrediction):
 
 # Define the training arguments
 training_args = TrainingArguments(
-    output_dir=f"./classifier_{model_name}_{epochs}ep_lr{learning_rate}{'_full' if fine_tune_bert else '_head'}",
+    output_dir=f"./classifier_{model_name}_{epochs}ep_lr{learning_rate}_dropout{dropout_prob}{'_full' if fine_tune_bert else '_head'}",
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=(batch_size if not fine_tune_bert else 8*batch_size),
     evaluation_strategy='steps',
@@ -183,4 +188,4 @@ test_accuracy = evaluate_accuracy(test_loader)
 print(f'Test Set Accuracy: {test_accuracy * 100:.2f}%')
 
 # Save the fine-tuned model
-model.save_pretrained(f"./classifier_{model_name}_{epochs}ep_lr{learning_rate}{'_full' if fine_tune_bert else '_head'}")
+model.save_pretrained(f"./classifier_{model_name}_{epochs}ep_lr{learning_rate}_dropout{dropout_prob}{'_full' if fine_tune_bert else '_head'}")
