@@ -14,11 +14,11 @@ batch_size = 6 # Adjust to GPU memory (works on T4)
 max_length = 512 # ClimateX train set max length: 857 
 train_size = 0.85 
 learning_rate = 1e-5
-epochs = 3
+epochs = 2
 eval_steps = 200 # Can reduce after hyperparams search
 fine_tune_bert = True # False to fine-tune only head
 total_size = 12000 # Oversampling dataset size
-dropout_prob=0.2  # Dropout rate, default 0.1
+dropout_prob=0.1  # Dropout rate, default 0.1
 
 # Load dataset into a pandas DataFrame
 df = pd.read_csv('data/ipcc_statements_dataset.tsv', sep='\t')
