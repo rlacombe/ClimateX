@@ -17,7 +17,7 @@ learning_rate = 1e-5
 epochs = 2
 eval_steps = 200 # Can reduce after hyperparams search
 fine_tune_bert = True # False to fine-tune only head
-total_size = 12000 # Oversampling dataset size
+total_size = 8000 # Oversampling dataset size
 dropout_prob=0.1  # Dropout rate, default 0.1
 
 # Load dataset into a pandas DataFrame
