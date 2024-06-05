@@ -29,7 +29,8 @@ def get_overall_bias(results_df, model_classification_col_name):
 
 # Get the slope for the regression.
 # You can optionally plot the regression with the plot flag.
-def get_slope(results_df, model_classification_col_name, plot=False):
+# Optionally print average scores (predicted, ground truth, predicted per category) with verbose flag
+def get_slope(results_df, model_classification_col_name, plot=False, verbose=False):
     # Filter samples
     valid_results = results_df.loc[(results_df[model_classification_col_name] != 'N/A') & (results_df[model_classification_col_name] != 'idk')] 
 
@@ -47,10 +48,11 @@ def get_slope(results_df, model_classification_col_name, plot=False):
         "very high": valid_results.loc[valid_results['score'] == 3, 'predicted_score'].mean()
     }
 
-    print("=== All AR6 reports===")
-    print(f"Average ground truth score: {results_df['score'].mean()}")
-    print(f"Average predicted score: {valid_results['predicted_score'].mean()}")
-    print(f"Average scores per category: {scores_all}\n")
+    if verbose:
+        # print("=== All AR6 reports===")
+        print(f"Average ground truth score: {valid_results['score'].mean()}")
+        print(f"Average predicted score: {valid_results['predicted_score'].mean()}")
+        print(f"Average scores per category: {scores_all}\n")
 
     # Extract labels and values from the data dictionary
     labels = list(scores_all.keys())
@@ -68,7 +70,7 @@ def get_slope(results_df, model_classification_col_name, plot=False):
     # Extract the slope (coefficient) of the regression line
     slope = model.coef_[0]
 
-    print("The slope of the regression line is:", slope)
+    # print("The slope of the regression line is:", slope)
 
     if plot:
         # Plotting the data points and the regression line
@@ -90,6 +92,32 @@ def get_slope(results_df, model_classification_col_name, plot=False):
         plt.show()
     return slope
 
+
+# Get the accuracy, slope, and bias
+def print_accuracy_slope_bias_metrics(results_df, model_classification_col_names, plot=False, verbose=False):
+    accuracy = [get_overall_accuracy(results_df, col_name) for col_name in model_classification_col_names]
+    bias = [get_overall_bias(results_df, col_name) for col_name in model_classification_col_names]
+    print("accuracies", accuracy)
+    print("biases:", bias)
+    slope = [get_slope(results_df, col_name, plot=plot, verbose=verbose) for col_name in model_classification_col_names]
+    print("slopes", slope)
+
+    mean_accuracy = np.mean(accuracy)
+    mean_slope = np.mean(slope)
+    mean_bias = np.mean(bias)
+
+    std_accuracy = np.std(accuracy)
+    std_slope = np.std(slope)
+    std_bias = np.std(bias)
+
+    print(f"""
+---------------------------------------------------
+Metric, 95% confidence interval:
+Accuracy: {mean_accuracy:.2f} +/- {1.96*std_accuracy:.2f}
+Slope: {mean_slope:.2f} +/- {1.96*std_slope:.2f}
+Bias: {mean_bias:.2f} +/- {1.96*std_bias:.2f}
+"""
+    )
 
 
 def print_metrics(results_df, model_classification_col_name):
