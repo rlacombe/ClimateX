@@ -17,7 +17,7 @@ def extract_confidence(text):
         return "N/A"
     
 
-def get_prompt(statement): 
+def get_zero_shot_prompt(statement): 
     return f"""
 You are a helpful and knowledgeable climate science and policy assistant trained to assess human expert confidence in statements about climate change.
 
