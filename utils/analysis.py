@@ -113,9 +113,9 @@ def print_accuracy_slope_bias_metrics(results_df, model_classification_col_names
     print(f"""
 ---------------------------------------------------
 Metric, 95% confidence interval:
-Accuracy: {mean_accuracy:.3f} +/- {1.96*std_accuracy:.3f}
-Slope: {mean_slope:.3f} +/- {1.96*std_slope:.3f}
-Bias: {mean_bias:.3f} +/- {1.96*std_bias:.3f}
+Accuracy: {100*mean_accuracy:.1f} ±{100**std_accuracy:.1f}
+Slope: {mean_slope:.3f} ±{std_slope:.3f}
+Bias: {mean_bias:.3f} ±{std_bias:.3f}
 """
     )
 
