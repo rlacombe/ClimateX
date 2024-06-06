@@ -102,18 +102,18 @@ def print_accuracy_slope_bias_metrics(results_df, model_classification_col_names
     slope = [get_slope(results_df, col_name, plot=plot, verbose=verbose) for col_name in model_classification_col_names]
     print("slopes", slope)
 
-    mean_accuracy = np.mean(accuracy)
+    mean_accuracy = 100*np.mean(accuracy)
     mean_slope = np.mean(slope)
     mean_bias = np.mean(bias)
 
-    std_accuracy = np.std(accuracy)
+    std_accuracy = 100*np.std(accuracy)
     std_slope = np.std(slope)
     std_bias = np.std(bias)
 
     print(f"""
 ---------------------------------------------------
 Metric, Std Dev:
-Accuracy: {100*mean_accuracy:.1f} ±{100**std_accuracy:.1f}
+Accuracy: {mean_accuracy:.1f} ±{std_accuracy:.1f}
 Slope: {mean_slope:.3f} ±{std_slope:.3f}
 Bias: {mean_bias:.3f} ±{std_bias:.3f}
 """
